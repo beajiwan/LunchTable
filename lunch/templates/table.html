@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>날짜 테이블</title>
+</head>
+<body>
+    <h2>2024년 1월</h2>
+    <table border='1' style="margin-right: 0; margin-left: auto;">
+        <tr>
+            <th rowspan="3">결재</th>
+            <th>담당</th>
+            <th>실장</th>
+            <th>대표이사</th>
+        </tr>
+        <tr>
+            <td><input type="checkbox" name="approval"></td>
+            <td><input type="checkbox" name="approval2"></td>
+            <td><input type="checkbox" name="approval3"></td>
+        </tr>
+    </table>
+    <p></p><p></p>
+    <table border='1' style="margin: 0 auto; width: 50%;">
+        <tr style="background-color: pink">
+            <th>성명/날짜</th>
+            <!-- JavaScript로 반복문으로 1부터 30까지의 헤더 생성 -->
+            <script>
+                for (let i = 1; i <= 30; i++) {
+                    document.write("<th>" + i + "</th>");
+                }
+            </script>
+        </tr>
+        <!-- 각 행에 대한 반복문 -->
+        <script>
+            const names = ["김진영", "김재현", "배지환", "최우성", ""];
+            for (const name of names) {
+                document.write("<tr><td>" + name + "</td>");
+                for (let i = 1; i <= 30; i++) {
+                    const checkboxId = `checkbox_${name}_${i}`;
+                    document.write(`<td><input type='checkbox' id='${checkboxId}' onchange='saveCheckboxState("${checkboxId}")'></td>`);
+                }
+                document.write("</tr>");
+            }
+        </script>
+    </table>
+
+    <!-- 페이지 로드 시 서버에서 체크박스 상태를 불러와 적용하는 함수 -->
+    <script>
+        function loadCheckboxState() {
+            fetch('/table')
+                .then(response => response.json())
+                .then(data => {
+                    data.checkbox_states.forEach(function(checkbox_state) {
+                        const checkbox = document.getElementById(checkbox_state.checkbox_id);
+                        if (checkbox) {
+                            checkbox.checked = checkbox_state.is_checked;
+                        }
+                    });
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        // 페이지 로드 시 서버에서 체크박스 상태를 불러와 적용
+        loadCheckboxState();
+
+        // 체크박스 상태를 서버에 저장하는 함수
+        function saveCheckboxState(checkboxId) {
+            const checkbox = document.getElementById(checkboxId);
+            const isChecked = checkbox.checked;
+
+            fetch('/save_checkbox_state', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    checkboxId: checkboxId,
+                    isChecked: isChecked,
+                }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data.status);
+                })
+                .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>
