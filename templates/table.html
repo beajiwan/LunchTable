@@ -1,0 +1,22 @@
+<!doctype html>
+<html>
+    <body>
+        <form>
+            <title>Lotto Win Result</title>
+        </form>
+
+        {{ win_result['round'] }}<br>
+        {% for n in win_result['win result']['numbers'] %}
+            {{ n }}
+        {% endfor %}
+        {{ win_result['win result']['bonus'] }}<br>
+        {% for rank, result in win_result['win result']['win'].items() %}
+            {{ rank }}<br>
+            {% for total, num in result.items() %}
+                {{ total }}
+                {{ num }}<br>
+            {% endfor %}
+        {% endfor %}
+
+    </body>
+</html>
