@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>날짜 테이블</title>
+</head>
+<body>
+
+<h2>2024년 1월</h2>
+
+<table border='1' style="margin-right: 0; margin-left: auto;">
+  <tr>
+    <th rowspan="3">결재</th>
+    <th>담당</th>
+    <th>실장</th>
+    <th>대표이사</th>
+  </tr>
+  <tr>
+    <td><input type="checkbox" name="approval"></td>
+    <td><input type="checkbox" name="approval2"></td>
+    <td><input type="checkbox" name="approval3"></td>
+  </tr>
+</table>
+
+<p></p><p></p>
+
+<table border='1' style="margin: 0 auto; width: 50%;">
+  <tr style="background-color: pink">
+    <th>성명/날짜</th>
+    <!-- JavaScript로 반복문으로 1부터 30까지의 헤더 생성 -->
+    <script>
+      for (let i = 1; i <= 30; i++) {
+        document.write("<th>" + i + "</th>");
+      }
+    </script>
+  </tr>
+  <!-- 각 행에 대한 반복문 -->
+ <script>
+  const names = ["김진영", "김재현", "배지환", "최우성", ""];
+  for (const name of names) {
+    document.write("<tr><td>" + name + "</td>");
+    for (let i = 1; i <= 30; i++) {
+      const staticName = "checkbox_" + i;  // 정적인 이름 사용
+      const combinedName = name + "_" + staticName;  // name과 staticName을 조합하여 새로운 이름 생성
+      document.write("<td><input type='checkbox' name='" + combinedName + "' onchange='saveCheckboxState(this)'></td>");
+    }
+    document.write("</tr>");
+  }
+</script>
+</table>
+
+<script>
+  // 체크박스 상태를 로컬 저장소에 저장하는 함수
+  function saveCheckboxState(checkbox) {
+    const checkboxName = checkbox.name;
+    const isChecked = checkbox.unChecked;
+    localStorage.setItem(checkboxName, isChecked);
+  }
+
+  // 페이지 로드 시 로컬 저장소에서 체크박스 상태를 불러와 적용하는 함수
+  async function loadCheckboxState() {
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+
+    // 각 체크박스의 상태를 서버에서 가져와 설정
+    checkboxes.forEach(async function(checkbox) {
+      const checkboxName = checkbox.name;
+
+      // 서버에 체크박스 상태를 요청
+      const response = await fetch(`/get_checkbox_state/${checkboxName}`);
+
+      if (response.ok) {
+        // 서버에서 응답이 온 경우, 체크박스 상태 설정
+        const isChecked = await response.json();
+        checkbox.checked = unChecked;
+      }
+    });
+  }
+
+  // 페이지 로드 시 로컬 저장소에서 체크박스 상태를 불러와 적용
+  loadCheckboxState();
+</script>
+
+</body>
+</html>
